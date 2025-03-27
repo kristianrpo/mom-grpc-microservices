@@ -1,9 +1,11 @@
 from datetime import datetime
 from utils.obtain_pending_data import obtain_pending_data
 from queue_manager.redis_handler import RedisHandler
-from proto import mom_pb2, mom_pb2_grpc
+from proto.mom import mom_pb2, mom_pb2_grpc
+from tests.microservice import microservice_pb2, microservice_pb2_grpc
 import threading
 import json
+import grpc
 class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
     def __init__(self):
         self.redis = RedisHandler()
@@ -52,8 +54,13 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
                     if(task_id is None or client_id is None or payload is None):
                         break
                     else:
-                        response = {
-                            "result": 2
-                        }
-                    self.redis.save_response(task_id, client_id, response)
-
+                        if service == "serviceA":
+                            channel = grpc.insecure_channel('localhost:50052')
+                            stub = microservice_pb2_grpc.CalculatorServiceStub(channel)
+                            payload = json.loads(payload)
+                            request = microservice_pb2.SumNumbersParameters(
+                                parameter_a=int(payload["a"]),
+                                parameter_b=int(payload["b"])
+                            )
+                            response = stub.SumNumbers(request)
+                            self.redis.save_response(task_id, client_id, response.result)
