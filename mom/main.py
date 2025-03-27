@@ -2,7 +2,7 @@ import time
 import grpc
 from concurrent import futures
 from services.mom_service import MOMServiceServicer
-from proto import mom_pb2_grpc
+from proto.mom import mom_pb2_grpc
 
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 mom_pb2_grpc.add_MOMServiceServicer_to_server(
