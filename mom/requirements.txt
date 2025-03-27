@@ -1,0 +1,6 @@
+async-timeout==5.0.1
+grpcio==1.70.0
+grpcio-tools==1.70.0
+protobuf==5.29.4
+python-dotenv==1.0.1
+redis==5.2.1
