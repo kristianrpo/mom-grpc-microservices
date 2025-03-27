@@ -1,5 +1,5 @@
 import grpc
-from proto import mom_pb2, mom_pb2_grpc
+from proto.mom import mom_pb2, mom_pb2_grpc
 
 def enqueue_task():
     channel = grpc.insecure_channel('localhost:50051')
