@@ -203,12 +203,9 @@ def process_tasks(redis_handler):
                 # Log any exceptions that occur during task processing.
                 print(f"❌ Error processing task: {e}")
         else:
-            # If no task is available, wait for a while before checking again.
+            # If no task is available
             print("❌ No tasks found in the queue, waiting...")
-            time.sleep(5)  # Wait 5 seconds before retrying
-            # Optionally, you can choose to continue or break here based on your requirements.
-            # For example, to exit the loop uncomment the following line:
-            # break
+            break
 
 def serve():
     """
