@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tmom.proto\x12\x03mom\"d\n\x1cSavePendingServiceParameters\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0f\n\x07service\x18\x02 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\t\"Q\n\x1aSavePendingServiceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08response\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t\"F\n RetrievePendingServiceParameters\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x11\n\tclient_id\x18\x01 \x01(\t\"U\n\x1eRetrievePendingServiceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08response\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t2\xcc\x01\n\nMOMService\x12X\n\x12SavePendingService\x12!.mom.SavePendingServiceParameters\x1a\x1f.mom.SavePendingServiceResponse\x12\x64\n\x16RetrievePendingService\x12%.mom.RetrievePendingServiceParameters\x1a#.mom.RetrievePendingServiceResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\tmom.proto\x12\x03mom\"d\n\x1cSavePendingServiceParameters\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x11\n\tclient_id\x18\x02 \x01(\t\x12\x0f\n\x07service\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\t\"Q\n\x1aSavePendingServiceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08response\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t\"F\n RetrievePendingServiceParameters\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x11\n\tclient_id\x18\x02 \x01(\t\"U\n\x1eRetrievePendingServiceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08response\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t\"S\n\x1bSaveResultServiceParameters\x12\x11\n\tclient_id\x18\x02 \x01(\t\x12\x0f\n\x07task_id\x18\x03 \x01(\t\x12\x10\n\x08response\x18\x04 \x01(\t\"P\n\x19SaveResultServiceResponse\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x10\n\x08response\x18\x02 \x01(\t\x12\x11\n\ttimestamp\x18\x03 \x01(\t2\xa3\x02\n\nMOMService\x12X\n\x12SavePendingService\x12!.mom.SavePendingServiceParameters\x1a\x1f.mom.SavePendingServiceResponse\x12\x64\n\x16RetrievePendingService\x12%.mom.RetrievePendingServiceParameters\x1a#.mom.RetrievePendingServiceResponse\x12U\n\x11SaveResultService\x12 .mom.SaveResultServiceParameters\x1a\x1e.mom.SaveResultServiceResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,6 +39,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_RETRIEVEPENDINGSERVICEPARAMETERS']._serialized_end=273
   _globals['_RETRIEVEPENDINGSERVICERESPONSE']._serialized_start=275
   _globals['_RETRIEVEPENDINGSERVICERESPONSE']._serialized_end=360
-  _globals['_MOMSERVICE']._serialized_start=363
-  _globals['_MOMSERVICE']._serialized_end=567
+  _globals['_SAVERESULTSERVICEPARAMETERS']._serialized_start=362
+  _globals['_SAVERESULTSERVICEPARAMETERS']._serialized_end=445
+  _globals['_SAVERESULTSERVICERESPONSE']._serialized_start=447
+  _globals['_SAVERESULTSERVICERESPONSE']._serialized_end=527
+  _globals['_MOMSERVICE']._serialized_start=530
+  _globals['_MOMSERVICE']._serialized_end=821
 # @@protoc_insertion_point(module_scope)

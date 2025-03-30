@@ -44,6 +44,11 @@ class MOMServiceStub(object):
                 request_serializer=mom__pb2.RetrievePendingServiceParameters.SerializeToString,
                 response_deserializer=mom__pb2.RetrievePendingServiceResponse.FromString,
                 _registered_method=True)
+        self.SaveResultService = channel.unary_unary(
+                '/mom.MOMService/SaveResultService',
+                request_serializer=mom__pb2.SaveResultServiceParameters.SerializeToString,
+                response_deserializer=mom__pb2.SaveResultServiceResponse.FromString,
+                _registered_method=True)
 
 
 class MOMServiceServicer(object):
@@ -61,6 +66,12 @@ class MOMServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SaveResultService(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_MOMServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +84,11 @@ def add_MOMServiceServicer_to_server(servicer, server):
                     servicer.RetrievePendingService,
                     request_deserializer=mom__pb2.RetrievePendingServiceParameters.FromString,
                     response_serializer=mom__pb2.RetrievePendingServiceResponse.SerializeToString,
+            ),
+            'SaveResultService': grpc.unary_unary_rpc_method_handler(
+                    servicer.SaveResultService,
+                    request_deserializer=mom__pb2.SaveResultServiceParameters.FromString,
+                    response_serializer=mom__pb2.SaveResultServiceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +145,33 @@ class MOMService(object):
             '/mom.MOMService/RetrievePendingService',
             mom__pb2.RetrievePendingServiceParameters.SerializeToString,
             mom__pb2.RetrievePendingServiceResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SaveResultService(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/mom.MOMService/SaveResultService',
+            mom__pb2.SaveResultServiceParameters.SerializeToString,
+            mom__pb2.SaveResultServiceResponse.FromString,
             options,
             channel_credentials,
             insecure,

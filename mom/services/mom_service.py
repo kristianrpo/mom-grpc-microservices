@@ -1,66 +1,121 @@
 from datetime import datetime
-from utils.obtain_pending_data import obtain_pending_data
 from queue_manager.redis_handler import RedisHandler
 from proto.mom import mom_pb2, mom_pb2_grpc
-from tests.microservice import microservice_pb2, microservice_pb2_grpc
-import threading
+from const.states import states
 import json
-import grpc
+
 class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
     def __init__(self):
         self.redis = RedisHandler()
-        self.pubsub = self.redis.client.pubsub()
-        self.pubsub.subscribe("microservices")
-
-        threading.Thread(target=self.listen_to_microservices, daemon=True).start()
+        print("INFO: Redis connection established.")
+        print("INFO: MOMService initialized.")
+        print("INFO: MOMService is ready to process requests.")
 
     def SavePendingService(self, request, context):
-        self.redis.save_pending_request(
+
+        print("INFO: Saving pending service request...")
+
+        is_successful, error_message = self.redis.save_pending_request(
             service=request.service,
             client_id=request.client_id,
             task_id=request.task_id,
             payload=request.payload
         )
 
+        if not is_successful:
+
+            print("ERROR: Failed to save pending service request.")
+            print(f"ERROR: {error_message}")
+
+            return mom_pb2.SavePendingServiceResponse(
+                status=states["2"],
+                response="Failed to save task",
+                timestamp=datetime.utcnow().isoformat()
+            )
+        
+        print("INFO: Pending service request saved.")
+
         return mom_pb2.SavePendingServiceResponse(
-            status="pending",
+            status=states["1"],
             response="Task queued",
             timestamp=datetime.utcnow().isoformat()
         )
     
     def RetrievePendingService(self, request, context):
-        response = self.redis.get_response(request.task_id, request.client_id)
+
+        print("INFO: Retrieving pending service response...")
+
+        is_successful, response, error_message = self.redis.get_response(request.task_id, request.client_id)
+
+        if not is_successful:
+
+            print("ERROR: Failed to retrieve pending service response.")
+            print(f"ERROR: {error_message}")
+
+            return mom_pb2.RetrievePendingServiceResponse(
+                status=states["2"],
+                response="Failed to retrieve task",
+                timestamp=datetime.utcnow().isoformat()
+            )
+        
+        print("INFO: Get response works successfully.")
+        
         if response:
-            self.redis.delete_task(f"response:{request.client_id}:{request.task_id}")
+            is_successful, error_message = self.redis.delete_task(f"response:{request.client_id}:{request.task_id}")
+            if not is_successful:
+
+                print("ERROR: Failed to delete task.")
+                print(f"ERROR: {error_message}")
+
+                return mom_pb2.RetrievePendingServiceResponse(
+                    status=states["2"],
+                    response="Failed to delete task",
+                    timestamp=datetime.utcnow().isoformat()
+                )
+            
+            print("INFO: Task deleted successfully from database to retrieve the response.")
+
+            print(f"INFO: Task found from client id {request.client_id} with task id {request.task_id}, response retrieved.")
+
             return mom_pb2.RetrievePendingServiceResponse(
                 status=response["status"],
                 response=json.dumps(response["response"]),
                 timestamp=response["timestamp"]
             )
+        
         else:
+
+            print("INFO: Task not found, the task is still processing.")
+
             return mom_pb2.RetrievePendingServiceResponse(
-                status="not_found",
+                status=states["0"],
                 response="Task not found",
                 timestamp=datetime.utcnow().isoformat()
             )
         
-    def listen_to_microservices(self):
-        for message in self.pubsub.listen():
-            if message["type"] == "message":
-                data = json.loads(message["data"])
-                service = data.get("service")
-                while(True):
-                    task_id, client_id, payload = obtain_pending_data(self.redis, service)
-                    if(task_id is None or client_id is None or payload is None):
-                        break
-                    else:
-                        if service == "serviceA":
-                            channel = grpc.insecure_channel('localhost:50052')
-                            stub = microservice_pb2_grpc.CalculatorServiceStub(channel)
-                            payload = json.loads(payload)
-                            request = microservice_pb2.SumNumbersParameters(
-                                parameter_a=int(payload["a"]),
-                                parameter_b=int(payload["b"])
-                            )
-                            response = stub.SumNumbers(request)
-                            self.redis.save_response(task_id, client_id, response.result)
+    def SaveResultService(self, request, context):
+        print("INFO: Saving service result...")
+
+        is_successful, error_message = self.redis.save_response(
+            task_id=request.task_id,
+            client_id=request.client_id,
+            response=request.response
+        )
+
+        if not is_successful:
+            print("ERROR: Failed to save service result when it goes up.")
+            print(f"ERROR: {error_message}")
+
+            return mom_pb2.SaveResultServiceResponse(
+                status=states["2"],
+                response="Failed to save result",
+                timestamp=datetime.utcnow().isoformat()
+            )
+
+        print("INFO: Service result saved.")
+
+        return mom_pb2.SaveResultServiceResponse(
+            status=states["1"],
+            response="Response saved",
+            timestamp=datetime.utcnow().isoformat()
+        )
