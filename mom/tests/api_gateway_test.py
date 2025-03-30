@@ -8,8 +8,8 @@ def enqueue_task():
     request = mom_pb2.SavePendingServiceParameters(
         task_id="task123",
         client_id="client001",
-        service="serviceA",
-        payload='{"a": 5, "b": 10}'
+        service="CalculatorService",
+        payload='{"parameter_a": 5, "parameter_b": 10}'
     )
 
     response = stub.SavePendingService(request)
