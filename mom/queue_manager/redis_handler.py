@@ -10,15 +10,15 @@ class RedisHandler:
         redis_port = int(os.getenv("REDIS_PORT", 6379))
         self.client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
     
-    def save_pending_request(self, service, client_id, task_id, payload, ttl=5000):
+    def save_pending_request(self, service, client_id, task_id, time_to_live_seconds, payload):
         """
         Save a task in the queue of the service requested that will be accessed by the microservice when it goes up.
         Args:
             service (str): The name of the service.
             client_id (str): The client ID.
             task_id (str): The task ID.
+            time_to_live_seconds (int): Time to live for the task in seconds.
             payload (str): The payload for the task.
-            ttl (int): Time to live for the task in seconds.
         Returns:
             bool: True if the task was saved successfully, False otherwise.
             str: Error message if any.  
@@ -31,7 +31,7 @@ class RedisHandler:
                 "service": service,
                 "payload": payload,
                 "status": "pending",
-                "time_to_live": ttl,
+                "time_to_live_seconds": time_to_live_seconds,
                 "created_at": datetime.utcnow().isoformat()
             })
             self.client.rpush(queue_key, value)
@@ -55,7 +55,7 @@ class RedisHandler:
         except Exception as e:
             return False, str(e)
     
-    def save_response(self, task_id, client_id, response, ttl=5000):
+    def save_response(self, task_id, client_id, response, time_to_live_seconds):
         """
         Save the result from the microservice for a given task_id and client_id.
         Args:
@@ -74,7 +74,7 @@ class RedisHandler:
                 "response": response,
                 "timestamp": datetime.utcnow().isoformat()
             })
-            self.client.setex(key, ttl, value)
+            self.client.setex(key, time_to_live_seconds, value)
             return True,None
         except Exception as e:
             return False, str(e)
