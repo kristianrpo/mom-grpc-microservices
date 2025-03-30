@@ -1,7 +1,7 @@
 from datetime import datetime
 from queue_manager.redis_handler import RedisHandler
 from proto.mom import mom_pb2, mom_pb2_grpc
-from const.states import states
+from constants.states import states
 import json
 
 class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
