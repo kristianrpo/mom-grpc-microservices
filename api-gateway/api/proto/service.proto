@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package myservice;
+
+message RequestMessage {
+    string name = 1;
+}
+
+message ResponseMessage {
+    string message = 1;
+}
+
+service MyService {
+    rpc SayHello (RequestMessage) returns (ResponseMessage);
+}
