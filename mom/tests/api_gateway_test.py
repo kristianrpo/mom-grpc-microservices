@@ -9,6 +9,7 @@ def enqueue_task():
         task_id="task123",
         client_id="client001",
         service="CalculatorService",
+        time_to_live_seconds=10,
         payload='{"parameter_a": 5, "parameter_b": 10}'
     )
 

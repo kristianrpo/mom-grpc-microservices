@@ -6,14 +6,14 @@ import redis
 import json
 import time
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from proto.mom import mom_pb2, mom_pb2_grpc
 
 def sumar(a, b):
     """Función de lógica principal para sumar dos números."""
     return a + b
 
-def response_to_mom(result):
+def response_to_mom(client_id,task_id,time_to_live_seconds,created_at,result):
     channel = grpc.insecure_channel('localhost:50051')
     stub = mom_pb2_grpc.MOMServiceStub(channel)
 
@@ -24,8 +24,10 @@ def response_to_mom(result):
     })
 
     request = mom_pb2.SaveResultServiceParameters(
-        client_id="client001",
-        task_id="task123",
+        client_id=client_id,
+        task_id=task_id,
+        time_to_live_seconds=time_to_live_seconds,
+        created_at=created_at,
         response=response_data
     )
     response = stub.SaveResultService(request)
@@ -87,13 +89,27 @@ def process_tasks(redis_handler):
         if task_json:
             try:
                 task_data = json.loads(task_json)
-                payload = json.loads(task_data.get("payload"))
-                print(f"📥 Tarea recibida: {task_data}")
-                a = payload.get("parameter_a")
-                b = payload.get("parameter_b")
-                resultado = sumar(a, b)
-                print(f"🧮 Tarea procesada: {a} + {b} = {resultado}")
-                response_to_mom(resultado)
+                ttl_seconds = task_data.get("time_to_live_seconds")
+                created_at = task_data.get("created_at")
+
+                if created_at.endswith('Z'):
+                    created_at = created_at[:-1]
+                
+                dt = datetime.fromisoformat(created_at)
+                new_dt = dt + timedelta(seconds=ttl_seconds)
+
+                if datetime.utcnow() > new_dt:
+                    print("❌ Task expired, skipping...")
+                    continue
+
+                else:
+                    payload = json.loads(task_data.get("payload"))
+                    print(f"📥 Tarea recibida: {task_data}")
+                    a = payload.get("parameter_a")
+                    b = payload.get("parameter_b")
+                    resultado = sumar(a, b)
+                    print(f"🧮 Tarea procesada: {a} + {b} = {resultado}")
+                    response_to_mom(task_data.get("client_id"),task_data.get("task_id"),ttl_seconds,created_at,resultado)
             except Exception as e:
                 print(f"❌ Error al procesar la tarea: {e}")
         else:
