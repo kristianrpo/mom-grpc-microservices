@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from queue_manager.redis_handler import RedisHandler
 from proto.mom import mom_pb2, mom_pb2_grpc
 from constants.states import states
@@ -29,6 +29,7 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
             service=request.service,
             client_id=request.client_id,
             task_id=request.task_id,
+            time_to_live_seconds=request.time_to_live_seconds,
             payload=request.payload
         )
 
@@ -112,11 +113,11 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
         # If the response is not found, it means that the task is still processing 
         else:
 
-            print("INFO: Task not found, the task is still processing.")
+            print("INFO: Task not found")
 
             return mom_pb2.RetrievePendingServiceResponse(
                 status=states["0"],
-                response="Task not found",
+                response="Task not found, the task is still processing or it was deleted because of the time to live",
                 timestamp=datetime.utcnow().isoformat()
             )
         
@@ -132,10 +133,37 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
 
         print("INFO: Saving service result...")
 
+        # Obtain the creation date from the request
+        creation_date_str = request.created_at
+
+        # Check if the string ends with 'Z' and remove it
+        if creation_date_str.endswith('Z'):
+            creation_date_str = creation_date_str[:-1]
+
+        # Convert the string to a datetime object
+        creation_date = datetime.fromisoformat(creation_date_str)
+
+        # Calculate current and expiration dates
+        current_date = datetime.utcnow()
+        expiration_date = creation_date + timedelta(seconds=int(request.time_to_live_seconds))
+
+        # Check if the request is still available
+        time_left = expiration_date - current_date
+        if time_left.total_seconds() < 0:
+            print("ERROR: The request is not available anymore.")
+            return mom_pb2.SaveResultServiceResponse(
+                status=states["2"],
+                response="Request not available, time to live expired",
+                timestamp=datetime.utcnow().isoformat()
+            )
+    
+        print(f"INFO: Time left for the request: {time_left.total_seconds()} seconds")
+
         # Save the result of the microservice to Redis to retrieve it later
         is_successful, error_message = self.redis.save_response(
             task_id=request.task_id,
             client_id=request.client_id,
+            time_to_live_seconds = int(time_left.total_seconds()),
             response=request.response
         )
 
