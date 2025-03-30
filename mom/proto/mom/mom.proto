@@ -6,7 +6,8 @@ message SavePendingServiceParameters {
   string task_id = 1;
   string client_id = 2;
   string service = 3;
-  string payload = 4;
+  int32 time_to_live_seconds = 4;
+  string payload = 5;
 }
 
 message SavePendingServiceResponse {
@@ -32,9 +33,11 @@ message RetrievePendingServiceResponse {
 
 
 message SaveResultServiceParameters {
-  string client_id = 2;
-  string task_id = 3;
-  string response = 4;
+  string client_id = 1;
+  string task_id = 2;
+  int32 time_to_live_seconds = 3;
+  string created_at = 4;
+  string response = 5;
 
 }
 
