@@ -6,15 +6,25 @@ import json
 
 class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
     def __init__(self):
+        # Initialize the Redis connection
         self.redis = RedisHandler()
         print("INFO: Redis connection established.")
         print("INFO: MOMService initialized.")
         print("INFO: MOMService is ready to process requests.")
 
     def SavePendingService(self, request, context):
+        """
+        Save a pending service request to the Redis queue.
+        Args:
+            request: The request object containing service details.
+            context: The gRPC context.
+        Returns:
+            A response object indicating the status of the operation.
+        """
 
         print("INFO: Saving pending service request...")
 
+        # Save the pending request to Redis queue of the service
         is_successful, error_message = self.redis.save_pending_request(
             service=request.service,
             client_id=request.client_id,
@@ -22,6 +32,7 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
             payload=request.payload
         )
 
+        # Check if the request was saved successfully to respond to the client gRPC
         if not is_successful:
 
             print("ERROR: Failed to save pending service request.")
@@ -42,11 +53,21 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
         )
     
     def RetrievePendingService(self, request, context):
+        """
+        Retrieve the result of the pending service that is created when a service goes up.
+        Args:
+            request: The request object containing task details.
+            context: The gRPC context.
+        Returns:
+            A response object containing the status and response of the task.
+        """
 
         print("INFO: Retrieving pending service response...")
 
+        # Retrieve the response of the microservice that is saved on Redis
         is_successful, response, error_message = self.redis.get_response(request.task_id, request.client_id)
 
+        # Check if the response was retrieved successfully (including none objects) to respond something to the client gRPC
         if not is_successful:
 
             print("ERROR: Failed to retrieve pending service response.")
@@ -60,8 +81,13 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
         
         print("INFO: Get response works successfully.")
         
+        # If the response is found, delete the task from Redis to avoid waiting for the ttl of the task and return the response from de microservice
         if response:
+
+            # Delete the task from Redis
             is_successful, error_message = self.redis.delete_task(f"response:{request.client_id}:{request.task_id}")
+
+            # Check if the task was deleted successfully to respond to the client gRPC
             if not is_successful:
 
                 print("ERROR: Failed to delete task.")
@@ -83,6 +109,7 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
                 timestamp=response["timestamp"]
             )
         
+        # If the response is not found, it means that the task is still processing 
         else:
 
             print("INFO: Task not found, the task is still processing.")
@@ -94,14 +121,25 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
             )
         
     def SaveResultService(self, request, context):
+        """
+        Save the result of the microservice to Redis.
+        Args:
+            request: The request object containing task result details.
+            context: The gRPC context.
+        Returns:
+            A response object indicating the status of the operation.
+        """
+
         print("INFO: Saving service result...")
 
+        # Save the result of the microservice to Redis to retrieve it later
         is_successful, error_message = self.redis.save_response(
             task_id=request.task_id,
             client_id=request.client_id,
             response=request.response
         )
 
+        # Check if the result was saved successfully to respond to the client gRPC (in this case is the microservice)
         if not is_successful:
             print("ERROR: Failed to save service result when it goes up.")
             print(f"ERROR: {error_message}")
