@@ -149,7 +149,8 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
 
         # Check if the request is still available
         time_left = expiration_date - current_date
-        if time_left.total_seconds() < 0:
+        time_left_seconds = int(time_left.total_seconds())
+        if time_left_seconds <= 0:
             print("ERROR: The request is not available anymore.")
             return mom_pb2.SaveResultServiceResponse(
                 status=states["2"],
@@ -157,13 +158,13 @@ class MOMServiceServicer(mom_pb2_grpc.MOMServiceServicer):
                 timestamp=datetime.utcnow().isoformat()
             )
     
-        print(f"INFO: Time left for the request: {time_left.total_seconds()} seconds")
+        print(f"INFO: Time left for the request: {time_left_seconds} seconds")
 
         # Save the result of the microservice to Redis to retrieve it later
         is_successful, error_message = self.redis.save_response(
             task_id=request.task_id,
             client_id=request.client_id,
-            time_to_live_seconds = int(time_left.total_seconds()),
+            time_to_live_seconds = time_left_seconds,
             response=request.response
         )
 
