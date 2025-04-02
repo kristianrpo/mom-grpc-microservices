@@ -1,7 +1,7 @@
 from utils.cli_args import parse_client_args
 from utils.client_actions import notify
 from services.api_gateway import enqueue_task
-from handlers.response_handler import poll_for_response
+from handlers.response_handler import start_polling
 from utils.logger import log_event
 import uuid
 
@@ -15,7 +15,7 @@ def main():
     response = enqueue_task(client_id, task_id, payload, service)
     notify(client_id, task_id, f"📤 Enqueue task: {response}")
 
-    poll_for_response(client_id, task_id)
+    start_polling(client_id, task_id)
 
 if __name__ == "__main__":
     main()
