@@ -26,17 +26,20 @@ def parse_client_args():
     subparsers = parser.add_subparsers(dest="command")
 
     # Subcomando: submit
-    submit_parser = subparsers.add_parser("submit", help="Enviar una nueva tarea")
-    submit_parser.add_argument("--client-id", required=True, help="ID del cliente")
-    submit_parser.add_argument("--service", required=True, help="Nombre del servicio")
+    submit_parser = subparsers.add_parser("submit", help="Submit a new task")
+    submit_parser.add_argument("--client-id", required=True, help="Client ID")
+    submit_parser.add_argument("--service", required=True, help="Service name")
 
     # Subcomando: list
-    list_parser = subparsers.add_parser("list", help="Listar tareas desde los logs")
-    list_parser.add_argument("client_id", help="ID del cliente")
+    list_parser = subparsers.add_parser("list", help="List tasks from logs")
+    list_parser.add_argument("client_id", help="Client ID")
 
     # Subcomando: result
-    result_parser = subparsers.add_parser("result", help="Obtener resultado de una tarea")
-    result_parser.add_argument("client_id", help="ID del cliente")
-    result_parser.add_argument("task_id", help="ID de la tarea")
+    result_parser = subparsers.add_parser("result", help="Get task result")
+    result_parser.add_argument("client_id", help="Client ID")
+    result_parser.add_argument("task_id", help="Task ID")
+
+    # Subcomando: services
+    services_parser = subparsers.add_parser("services", help="List available services")
 
     return parser.parse_args()

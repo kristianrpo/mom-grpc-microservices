@@ -1,6 +1,6 @@
 from utils.cli_args import parse_client_args
 from utils.client_actions import notify
-from services.api_gateway import enqueue_task
+from services.api_gateway import enqueue_task, list_services
 from handlers.response_handler import start_polling
 from utils.task_retrieval import get_client_tasks, get_task_result
 import sys
@@ -34,6 +34,12 @@ def main():
     elif args.command == "result":
         result_msg = get_task_result(args.client_id, args.task_id)
         print(result_msg)
+
+    elif args.command == "services":
+        services = list_services()
+        print("Available services:")
+        for service in services:
+            print(f"  - {service}")
 
     else:
         print("Unrecognized command. Use -h to see the available commands.")
