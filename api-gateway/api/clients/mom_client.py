@@ -1,6 +1,6 @@
 import grpc
-from generated import mom_pb2, mom_pb2_grpc
-from config.settings import settings
+from api.generated import mom_pb2, mom_pb2_grpc
+from api.config.settings import settings
 
 class MOMClient:
     def __init__(self):

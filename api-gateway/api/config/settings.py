@@ -10,7 +10,12 @@ class Settings:
         "CalculatorService": {
             "host": os.getenv("CALCULATOR_HOST", "calculator-service"),
             "port": os.getenv("CALCULATOR_PORT", "50052"),
-            "stub": "CalculatorStub" 
+            "stub": "CalculatorStub",
+            "methods": {
+                "SumNumbers": {
+                    "request": "SumNumbersParameters"
+                }
+            }
         },
     }
 

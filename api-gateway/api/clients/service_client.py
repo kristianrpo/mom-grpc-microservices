@@ -1,11 +1,13 @@
 import grpc
 from google.protobuf.json_format import ParseDict
-from config.settings import SERVICES
+from api.config.settings import settings
+
+services = settings.SERVICES
 
 class ServiceClient:
     def __init__(self, service_name):
         self.service_name = service_name
-        self.config = SERVICES.get(service_name)
+        self.config = services.get(service_name)
         if not self.config:
             raise ValueError(f"Service '{service_name}' not configured")
         
@@ -19,9 +21,8 @@ class ServiceClient:
         self.proto_module = __import__(f"generated.{service_name.lower()}_pb2")
 
     def call(self, method_name, payload):
-        if method_name not in self.config["methods"]:
-            raise ValueError(f"Method '{method_name}' not found in {self.service_name}")
-        
+        method_name = list(self.config["methods"].keys())[0]
+
         request_class = getattr(self.proto_module, self.config["methods"][method_name]["request"])
         request = ParseDict(payload, request_class())
         
