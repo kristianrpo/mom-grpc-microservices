@@ -20,7 +20,8 @@ def main():
         response = enqueue_task(client_id, payload, service)
         task_id = response.get("task_id")
         notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service} | payload: {payload}")
-        start_polling(client_id, task_id)
+        interactive = not getattr(args, "background", False)
+        start_polling(client_id, task_id, interactive=interactive)
 
     elif args.command == "list":
         task_ids = get_client_tasks(args.client_id)

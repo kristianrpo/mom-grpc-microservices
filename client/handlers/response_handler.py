@@ -3,7 +3,7 @@ import threading
 from services.api_gateway import check_task_response
 from utils.client_actions import ask_to_continue, notify
 
-def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retries=3):
+def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retries=3, interactive=True):
     """
     Polls the server for the task response until it's completed or timeout is reached.
     """
@@ -17,13 +17,23 @@ def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retri
         if elapsed > timeout:
             notify(client_id, task_id, "🕐 Timeout reached. No response received.")
             
-            if retries < max_retries:
-                notify(client_id, task_id, "🔁 Restarting the wait...")
-                start = time.time()
-                continue
+            if interactive:
+                if ask_to_continue():
+                    notify(client_id, task_id, "🔁 Restarting the wait...")
+                    start = time.time()
+                    continue
+                else:
+                    notify(client_id, task_id, "🚫 Task canceled by user.")
+                    break
+            
             else:
-                notify(client_id, task_id, "🚫 Max retries reached. Cancelling task.")
-                break
+                if retries < max_retries:
+                    notify(client_id, task_id, "🔁 Restarting the wait...")
+                    start = time.time()
+                    continue
+                else:
+                    notify(client_id, task_id, "🚫 Max retries reached. Cancelling task.")
+                    break
 
         response = check_task_response(client_id, task_id)
         
@@ -34,10 +44,10 @@ def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retri
             print("⏳ Waiting for response...")
             time.sleep(poll_interval)
 
-def start_polling(client_id, task_id):
+def start_polling(client_id, task_id, interactive=True):
     """
     Starts a separate thread to poll for the response.
     """
-    thread = threading.Thread(target=poll_for_response, args=(client_id, task_id))
+    thread = threading.Thread(target=poll_for_response, args=(client_id, task_id), kwargs={"interactive": interactive})
     thread.start()
     return thread
