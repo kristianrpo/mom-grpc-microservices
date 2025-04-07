@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Dict
 import time
 import random
+import uuid
 
 app = FastAPI()
 
@@ -10,7 +11,6 @@ responses: Dict[str, dict] = {}
 
 class ServiceRequest(BaseModel):
     client_id: str
-    task_id: str
     service: str
     payload: dict
 
@@ -22,7 +22,9 @@ def enqueue_task(request: ServiceRequest):
     if request.service != "serviceA":
         return {"error": "Service not found"}
 
-    responses[request.task_id] = {
+    task_id = str(uuid.uuid4())
+
+    responses[task_id] = {
         "status": "pending",
         "response": None,
         "timestamp": None,
@@ -31,7 +33,7 @@ def enqueue_task(request: ServiceRequest):
 
     return {
         "status": "accepted in queue",
-        "task_id": request.task_id
+        "task_id": task_id,
     }
 
 @app.get("/api/tasks/status/{client_id}/{task_id}")
