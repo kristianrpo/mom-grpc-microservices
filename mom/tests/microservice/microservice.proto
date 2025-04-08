@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+message SumNumbersParameters {
+  int32 parameter_a = 1;
+  int32 parameter_b = 2;
+}
+
+message SumNumbersResponse {
+  string result = 1;
+}
+
+service CalculatorService {
+  rpc SumNumbers(SumNumbersParameters) returns (SumNumbersResponse);
+}

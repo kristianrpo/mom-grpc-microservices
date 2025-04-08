@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package mom;
+
+message SavePendingServiceParameters {
+  string task_id = 1;
+  string client_id = 2;
+  string service = 3;
+  int32 time_to_live_seconds = 4;
+  string payload = 5;
+}
+
+message SavePendingServiceResponse {
+  string status = 1;
+  string response = 2;
+  string timestamp = 3;
+}
+
+message RetrievePendingServiceParameters {
+  string task_id = 1;
+  string client_id = 2;
+}
+
+
+message RetrievePendingServiceResponse {
+  string status = 1;
+  string response = 2;
+  string timestamp = 3;
+}
+
+
+
+message SaveResultServiceParameters {
+  string client_id = 1;
+  string task_id = 2;
+  int32 time_to_live_seconds = 3;
+  string created_at = 4;
+  string response = 5;
+
+}
+
+
+message SaveResultServiceResponse {
+  string status = 1;
+  string response = 2;
+  string timestamp = 3;
+}
+
+
+
+service MOMService {
+  rpc SavePendingService(SavePendingServiceParameters) returns (SavePendingServiceResponse);
+  rpc RetrievePendingService(RetrievePendingServiceParameters) returns (RetrievePendingServiceResponse);
+  rpc SaveResultService(SaveResultServiceParameters) returns (SaveResultServiceResponse);
+}
