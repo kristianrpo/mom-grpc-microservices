@@ -6,17 +6,20 @@ def parse_client_args():
         epilog="""\
             Usage examples:
 
-            # Submit a task in the foreground (waits for the result)
-            python main.py submit --client-id client_001 --service serviceA
+            # List available services
+            python main.py services
 
-            # Submit a task in the background (no interaction, limited retries)
-            nohup python main.py submit --client-id client_001 --service serviceA --background &
+            # Submit a task in the foreground
+            python main.py submit --client-id {client_id} --service {service_name} --a {value1} --b {value2}
+
+            # Submit a task in the background
+            nohup python main.py submit --client-id {client_id} --service {service_name} --a {value1} --b {value2} --background &
 
             # List tasks submitted by a client
-            python main.py list client_001
+            python main.py list {client_id}
 
             # Get the result of a specific task
-            python main.py result client_001 1234-abcd-5678
+            python main.py result {client_id} {task_id}
 
             Note: Use '&' or 'nohup' if you want to run tasks in the background.
             """,
@@ -28,7 +31,9 @@ def parse_client_args():
     # Subcommand: submit
     submit_parser = subparsers.add_parser("submit", help="Submit a new task")
     submit_parser.add_argument("--client-id", required=True, help="Client ID")
-    submit_parser.add_argument("--service", required=True, help="Service name")
+    submit_parser.add_argument("--service", required=True, help="Service name (CalculatorService or MultiplicationService)")
+    submit_parser.add_argument("--a", type=float, required=True, help="First operand")
+    submit_parser.add_argument("--b", type=float, required=True, help="Second operand")
     submit_parser.add_argument("--background", action="store_true", help="Run in background mode")
 
     # Subcommand: list
