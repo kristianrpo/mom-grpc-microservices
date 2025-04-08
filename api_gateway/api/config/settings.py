@@ -17,6 +17,16 @@ class Settings:
                 }
             }
         },
+        "MultiplicationService": {
+            "host": os.getenv("MULTIPLICATION_HOST", "multiplication-service"),
+            "port": os.getenv("MULTIPLICATION_PORT", "50053"),
+            "stub": "MultiplicationStub",
+            "methods": {
+                "MultiplyNumbers": {
+                    "request": "MultiplyNumbersParameters"
+                }
+            }
+        },
     }
 
 
