@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import proto.mom.mom_pb2 as mom__pb2
+from mom.proto.mom import mom_pb2 as mom_dot_proto_dot_mom_dot_mom__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in mom_pb2_grpc.py depends on'
+        + f' but the generated code in mom/proto/mom/mom_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -36,18 +36,18 @@ class MOMServiceStub(object):
         """
         self.SavePendingService = channel.unary_unary(
                 '/mom.MOMService/SavePendingService',
-                request_serializer=mom__pb2.SavePendingServiceParameters.SerializeToString,
-                response_deserializer=mom__pb2.SavePendingServiceResponse.FromString,
+                request_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceParameters.SerializeToString,
+                response_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceResponse.FromString,
                 _registered_method=True)
         self.RetrievePendingService = channel.unary_unary(
                 '/mom.MOMService/RetrievePendingService',
-                request_serializer=mom__pb2.RetrievePendingServiceParameters.SerializeToString,
-                response_deserializer=mom__pb2.RetrievePendingServiceResponse.FromString,
+                request_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceParameters.SerializeToString,
+                response_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceResponse.FromString,
                 _registered_method=True)
         self.SaveResultService = channel.unary_unary(
                 '/mom.MOMService/SaveResultService',
-                request_serializer=mom__pb2.SaveResultServiceParameters.SerializeToString,
-                response_deserializer=mom__pb2.SaveResultServiceResponse.FromString,
+                request_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceParameters.SerializeToString,
+                response_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceResponse.FromString,
                 _registered_method=True)
 
 
@@ -77,18 +77,18 @@ def add_MOMServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SavePendingService': grpc.unary_unary_rpc_method_handler(
                     servicer.SavePendingService,
-                    request_deserializer=mom__pb2.SavePendingServiceParameters.FromString,
-                    response_serializer=mom__pb2.SavePendingServiceResponse.SerializeToString,
+                    request_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceParameters.FromString,
+                    response_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceResponse.SerializeToString,
             ),
             'RetrievePendingService': grpc.unary_unary_rpc_method_handler(
                     servicer.RetrievePendingService,
-                    request_deserializer=mom__pb2.RetrievePendingServiceParameters.FromString,
-                    response_serializer=mom__pb2.RetrievePendingServiceResponse.SerializeToString,
+                    request_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceParameters.FromString,
+                    response_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceResponse.SerializeToString,
             ),
             'SaveResultService': grpc.unary_unary_rpc_method_handler(
                     servicer.SaveResultService,
-                    request_deserializer=mom__pb2.SaveResultServiceParameters.FromString,
-                    response_serializer=mom__pb2.SaveResultServiceResponse.SerializeToString,
+                    request_deserializer=mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceParameters.FromString,
+                    response_serializer=mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -116,8 +116,8 @@ class MOMService(object):
             request,
             target,
             '/mom.MOMService/SavePendingService',
-            mom__pb2.SavePendingServiceParameters.SerializeToString,
-            mom__pb2.SavePendingServiceResponse.FromString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceParameters.SerializeToString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.SavePendingServiceResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -143,8 +143,8 @@ class MOMService(object):
             request,
             target,
             '/mom.MOMService/RetrievePendingService',
-            mom__pb2.RetrievePendingServiceParameters.SerializeToString,
-            mom__pb2.RetrievePendingServiceResponse.FromString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceParameters.SerializeToString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.RetrievePendingServiceResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -170,8 +170,8 @@ class MOMService(object):
             request,
             target,
             '/mom.MOMService/SaveResultService',
-            mom__pb2.SaveResultServiceParameters.SerializeToString,
-            mom__pb2.SaveResultServiceResponse.FromString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceParameters.SerializeToString,
+            mom_dot_proto_dot_mom_dot_mom__pb2.SaveResultServiceResponse.FromString,
             options,
             channel_credentials,
             insecure,
