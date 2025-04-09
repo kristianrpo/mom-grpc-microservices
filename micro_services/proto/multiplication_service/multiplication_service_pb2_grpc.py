@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import service_pb2 as service__pb2
+import proto.multiplication_service.multiplication_service_pb2 as multiplication__service__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -18,14 +18,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in service_pb2_grpc.py depends on'
+        + f' but the generated code in multiplication_service_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class MyServiceStub(object):
+class MultiplicationServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,43 +34,43 @@ class MyServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.SayHello = channel.unary_unary(
-                '/myservice.MyService/SayHello',
-                request_serializer=service__pb2.RequestMessage.SerializeToString,
-                response_deserializer=service__pb2.ResponseMessage.FromString,
+        self.MultiplyNumbers = channel.unary_unary(
+                '/multiplication_service.MultiplicationService/MultiplyNumbers',
+                request_serializer=multiplication__service__pb2.MultiplyNumbersRequest.SerializeToString,
+                response_deserializer=multiplication__service__pb2.MultiplyNumbersResponse.FromString,
                 _registered_method=True)
 
 
-class MyServiceServicer(object):
+class MultiplicationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def SayHello(self, request, context):
+    def MultiplyNumbers(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_MyServiceServicer_to_server(servicer, server):
+def add_MultiplicationServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'SayHello': grpc.unary_unary_rpc_method_handler(
-                    servicer.SayHello,
-                    request_deserializer=service__pb2.RequestMessage.FromString,
-                    response_serializer=service__pb2.ResponseMessage.SerializeToString,
+            'MultiplyNumbers': grpc.unary_unary_rpc_method_handler(
+                    servicer.MultiplyNumbers,
+                    request_deserializer=multiplication__service__pb2.MultiplyNumbersRequest.FromString,
+                    response_serializer=multiplication__service__pb2.MultiplyNumbersResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'myservice.MyService', rpc_method_handlers)
+            'multiplication_service.MultiplicationService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('myservice.MyService', rpc_method_handlers)
+    server.add_registered_method_handlers('multiplication_service.MultiplicationService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class MyService(object):
+class MultiplicationService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def SayHello(request,
+    def MultiplyNumbers(request,
             target,
             options=(),
             channel_credentials=None,
@@ -83,9 +83,9 @@ class MyService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/myservice.MyService/SayHello',
-            service__pb2.RequestMessage.SerializeToString,
-            service__pb2.ResponseMessage.FromString,
+            '/multiplication_service.MultiplicationService/MultiplyNumbers',
+            multiplication__service__pb2.MultiplyNumbersRequest.SerializeToString,
+            multiplication__service__pb2.MultiplyNumbersResponse.FromString,
             options,
             channel_credentials,
             insecure,

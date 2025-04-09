@@ -1,6 +1,6 @@
 import time
 import threading
-from services.api_gateway import check_task_response
+from services.api_gateway import get_task_status
 from utils.client_actions import ask_to_continue, notify
 
 def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retries=3, interactive=True):
@@ -35,7 +35,7 @@ def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retri
                     notify(client_id, task_id, "🚫 Max retries reached. Cancelling task.")
                     break
 
-        response = check_task_response(client_id, task_id)
+        response = get_task_status(client_id, task_id)
         
         if response.get("status") == "completed":
             notify(client_id, task_id, f"✅ Response for task {task_id} received: {response}")

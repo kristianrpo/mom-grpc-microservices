@@ -1,7 +1,7 @@
 from config.settings import API_URL
 import requests
 
-def enqueue_task(client_id, payload, service_name, ttl=60):
+def handle_request(client_id, payload, service_name, ttl=60):
     """
     Enqueues a task by sending a POST request to the API.
     """
@@ -14,7 +14,7 @@ def enqueue_task(client_id, payload, service_name, ttl=60):
     response.raise_for_status()
     return response.json()
 
-def check_task_response(client_id, task_id):
+def get_task_status(client_id, task_id):
     """
     Checks the response for a previously enqueued task.
     """

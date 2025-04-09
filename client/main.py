@@ -1,6 +1,6 @@
 from utils.cli_args import parse_client_args
 from utils.client_actions import notify
-from services.api_gateway import enqueue_task, list_services
+from services.api_gateway import handle_request, list_services
 from handlers.response_handler import start_polling
 from utils.task_retrieval import get_client_tasks, get_task_result
 import sys
@@ -14,12 +14,20 @@ def main():
 
     if args.command == "submit":
         client_id = args.client_id
-        service = args.service
-        payload = {"a": 5, "b": 10}
+        service_name = args.service
+        
+        if service_name == "CalculatorService":
+            payload = {"parameter_a": args.a, "parameter_b": args.b}
+        elif service_name == "MultiplicationService":
+            payload = {"parameter_a": args.a, "parameter_b": args.b}
+        else:
+            print(f"Unsupported service: {service_name}")
+            sys.exit(1)
 
-        response = enqueue_task(client_id, payload, service)
+        print(client_id, payload, service_name  )
+        response = handle_request(client_id, payload, service_name)
         task_id = response.get("task_id")
-        notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service} | payload: {payload}")
+        notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service_name} | payload: {payload}")
         interactive = not getattr(args, "background", False)
         start_polling(client_id, task_id, interactive=interactive)
 
