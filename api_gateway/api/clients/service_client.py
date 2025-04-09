@@ -26,13 +26,18 @@ class ServiceClient:
         self.proto_module = __import__(f"api.generated.{service_name.lower()}_pb2",
         fromlist=["*"] )
 
-    def call(self, method_name, payload):
-        method_name = list(self.config["methods"].keys())[0]
+    def call(self, service_name, payload):
+        service_config = services[service_name]
 
-        request_class = getattr(self.proto_module, self.config["methods"][method_name]["request"])
+        method_name = next(iter(service_config["methods"]))
 
-        request = request_class()
-        
+        if method_name not in service_config["methods"]:
+            raise ValueError(f"Method '{method_name}' not found in service '{service_name}'")
+
+        request_class_name = service_config["methods"][method_name]["request"]
+        request_class = getattr(self.proto_module, request_class_name)
+        request = ParseDict(payload, request_class())
+
         method = getattr(self.stub, method_name)
 
         return method(request)

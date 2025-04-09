@@ -139,7 +139,7 @@ def process_tasks(redis_handler):
                 print(f"❌ Error processing task: {e}")
         else:
             print("❌ No tasks found in the queue, waiting...")
-            break
+            time.sleep(2)
 
 def serve():
     redis_handler = RedisHandler()

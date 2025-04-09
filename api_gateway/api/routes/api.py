@@ -7,6 +7,7 @@ import traceback  # <- para tener stack trace en errores
 from api.clients.mom_client import MOMClient
 from api.config.settings import settings
 from api.clients.service_client import ServiceClient
+from google.protobuf.json_format import MessageToDict
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,26 +25,42 @@ class ServiceRequest(BaseModel):
 @router.post("/request")
 async def handle_request(request: ServiceRequest):
     task_id = str(uuid.uuid4())
+    print(f"Generated task_id: {task_id} - {request.dict()}")
+    logger.info(f"Received request: {task_id} - {request.dict()}")
     logger.info(f"Received request: task_id={task_id}, service_name={request.service_name}, client_id={request.client_id}")
 
     try:
-        # Verificar que el servicio exista antes de instanciarlo
+
         if request.service_name not in services:
             error_message = f"Service '{request.service_name}' not found in configured services."
             logger.error(error_message)
             raise HTTPException(status_code=404, detail=error_message)
 
         client = ServiceClient(request.service_name)
+
+        print(f"Client created for service: {request.service_name} with payload: {request.payload}")
         logger.info(f"Calling service client for {request.service_name} with payload: {request.payload}")
 
         response = client.call(request.service_name,request.payload)
+        print(f"Raw response from ServiceClient: {response}")
+        print(f"Type of response: {type(response)}")
 
-        logger.info(f"Immediate response received: {response.data}")
+        response_dict = MessageToDict(response)
+        logger.info(f"Response from service: {response_dict}")
+        print(f"Response from service: {response_dict}")
 
+        if "result" in response_dict:
+            try:
+                response_dict["result"] = json.loads(response_dict["result"])
+                print(f"Parsed result successfully: {response_dict['result']}")
+            except Exception as e:
+                logger.warning(f"Could not parse 'result' as JSON: {e}")
+                print(f"Could not parse 'result' as JSON: {e}")
+        print(f"Final response_dict: {response_dict}")
         return {
             "status": "success",
             "task_id": task_id,
-            "response": json.loads(response.data),
+            "response": response_dict,
             "processed_immediately": True
         }
 
@@ -72,7 +89,6 @@ async def handle_request(request: ServiceRequest):
         raise HTTPException(status_code=400, detail=str(e)) from e
 
     except Exception as e:
-        # Log detallado con traceback
         tb = traceback.format_exc()
         logger.critical(f"Unhandled Exception: {e}\nTraceback:\n{tb}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}") from e
