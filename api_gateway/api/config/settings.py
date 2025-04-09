@@ -3,7 +3,7 @@ import os
 
 class Settings:
     """Application settings configuration class."""
-    MOM_HOST = os.getenv("MOM_HOST", "mom-service")
+    MOM_HOST = os.getenv("MOM_HOST", "localhost")
     MOM_PORT = os.getenv("MOM_PORT", "50051")
     
     SERVICES = {
@@ -17,6 +17,16 @@ class Settings:
                 }
             }
         },
+        "MultiplicationService": {
+            "host": os.getenv("MULTIPLICATION_HOST", "localhost"),
+            "port": os.getenv("MULTIPLICATION_PORT", "50053"),
+            "stub": "MultiplicationServiceStub",
+            "methods": {
+                "MultiplyNumbers": {
+                    "request": "MultiplyNumbersRequest"
+                }
+            }
+        }
     }
 
 
