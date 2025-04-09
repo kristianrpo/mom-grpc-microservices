@@ -31,7 +31,7 @@ class ServiceClient:
 
         request_class = getattr(self.proto_module, self.config["methods"][method_name]["request"])
 
-        request = request_class()
+        request = ParseDict(payload, request_class())
         
         method = getattr(self.stub, method_name)
 

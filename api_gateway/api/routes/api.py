@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import uuid
 import json
 import grpc
-import traceback  # <- para tener stack trace en errores
+import traceback
 from api.clients.mom_client import MOMClient
 from api.config.settings import settings
 from api.clients.service_client import ServiceClient
@@ -38,12 +38,12 @@ async def handle_request(request: ServiceRequest):
 
         response = client.call(request.service_name,request.payload)
 
-        logger.info(f"Immediate response received: {response.data}")
+        logger.info(f"Immediate response received: {response.result}")
 
         return {
             "status": "success",
             "task_id": task_id,
-            "response": json.loads(response.data),
+            "response": response.result,
             "processed_immediately": True
         }
 

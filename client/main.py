@@ -26,10 +26,14 @@ def main():
 
         print(client_id, payload, service_name  )
         response = handle_request(client_id, payload, service_name)
-        task_id = response.get("task_id")
-        notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service_name} | payload: {payload}")
-        interactive = not getattr(args, "background", False)
-        start_polling(client_id, task_id, interactive=interactive)
+
+        if response.get("processed_immediately"):
+            print(f"✅ Immediate response received: {response.get('response')}")
+        else:
+            task_id = response.get("task_id")
+            notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service_name} | payload: {payload}")
+            interactive = not getattr(args, "background", False)
+            start_polling(client_id, task_id, interactive=interactive)
 
     elif args.command == "list":
         task_ids = get_client_tasks(args.client_id)
