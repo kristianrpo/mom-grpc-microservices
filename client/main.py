@@ -15,7 +15,7 @@ def main():
     if args.command == "submit":
         client_id = args.client_id
         service_name = args.service
-        
+
         if service_name == "CalculatorService":
             payload = {"parameter_a": args.a, "parameter_b": args.b}
         elif service_name == "MultiplicationService":
@@ -24,12 +24,17 @@ def main():
             print(f"Unsupported service: {service_name}")
             sys.exit(1)
 
-        print(client_id, payload, service_name  )
+        print(client_id, payload, service_name)
         response = handle_request(client_id, payload, service_name)
-        task_id = response.get("task_id")
-        notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service_name} | payload: {payload}")
-        interactive = not getattr(args, "background", False)
-        start_polling(client_id, task_id, interactive=interactive)
+        
+        if response.get("processed_immediately"):
+            print("Immediate response received:")
+            print(response.get("response"))
+        else:
+            task_id = response.get("task_id")
+            notify(client_id, task_id, f"📤 Enqueue task with id {task_id} | service: {service_name} | payload: {payload}")
+            interactive = not getattr(args, "background", False)
+            start_polling(client_id, task_id, interactive=interactive)
 
     elif args.command == "list":
         task_ids = get_client_tasks(args.client_id)
@@ -45,9 +50,9 @@ def main():
         print(result_msg)
 
     elif args.command == "services":
-        services = list_services()
+        services_list = list_services()
         print("Available services:")
-        for service in services:
+        for service in services_list:
             print(f"  - {service}")
 
     else:
