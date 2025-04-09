@@ -7,13 +7,13 @@ class Settings:
     MOM_PORT = os.getenv("MOM_PORT", "50051")
     
     SERVICES = {
-        "CalculatorService": {
-            "host": os.getenv("CALCULATOR_HOST", "calculator-service"),
-            "port": os.getenv("CALCULATOR_PORT", "50052"),
-            "stub": "CalculatorStub",
+        "SumService": {
+            "host": os.getenv("SUM_HOST", "localhost"),
+            "port": os.getenv("SUM_PORT", "50052"),
+            "stub": "SumServiceStub",
             "methods": {
                 "SumNumbers": {
-                    "request": "SumNumbersParameters"
+                    "request": "SumNumbersRequest"
                 }
             }
         },

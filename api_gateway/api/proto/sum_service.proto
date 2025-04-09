@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package sum_service;
+
+service SumService {
+  rpc SumNumbers(SumNumbersRequest) returns (SumNumbersResponse) {}
+}
+
+message SumNumbersRequest {
+  double parameter_a = 1;
+  double parameter_b = 2;
+}
+
+message SumNumbersResponse {
+  string result = 1;
+}

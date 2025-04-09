@@ -16,13 +16,12 @@ def main():
         client_id = args.client_id
         service_name = args.service
         
-        if service_name == "CalculatorService":
-            payload = {"parameter_a": args.a, "parameter_b": args.b}
-        elif service_name == "MultiplicationService":
-            payload = {"parameter_a": args.a, "parameter_b": args.b}
-        else:
-            print(f"Unsupported service: {service_name}")
+        services = list_services()
+        if service_name not in services:
+            print(f"Service '{service_name}' is not available.")
             sys.exit(1)
+        else:
+            payload = {"parameter_a": args.a, "parameter_b": args.b}
 
         print(client_id, payload, service_name  )
         response = handle_request(client_id, payload, service_name)
