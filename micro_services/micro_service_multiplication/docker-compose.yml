@@ -1,0 +1,10 @@
+services:
+  microservice_multiplication:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50053"
+    env_file:
+      - .env
+    restart: unless-stopped
