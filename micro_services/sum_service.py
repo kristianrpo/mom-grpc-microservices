@@ -11,6 +11,7 @@ import sys
 import os
 from proto.mom import mom_pb2, mom_pb2_grpc
 from proto.sum_service.sum_service_pb2_grpc import SumServiceServicer
+from constants.states import states
 
 def sumar(a, b):
     """
@@ -45,7 +46,7 @@ def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result
 
     # Prepare the response data as a JSON-encoded string.
     response_data = json.dumps({
-        "status": "ok",
+        "status": states["1"],
         "result": result,
         "timestamp": datetime.utcnow().isoformat()
     })
@@ -133,8 +134,8 @@ class SumService(SumServiceServicer):
             result = sumar(a, b)
             # Prepare the result data as a dictionary.
             result_data = {
+                "status": states["1"],
                 "sum": result,
-                "status": "ok",
                 "timestamp": datetime.utcnow().isoformat() + "Z"
             }
             # Convert the dictionary to a JSON string.

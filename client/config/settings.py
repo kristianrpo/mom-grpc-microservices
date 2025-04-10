@@ -3,4 +3,4 @@ import os
 
 load_dotenv()  
 
-API_URL = os.getenv("API_URL") 
+API_URL = os.getenv("API_URL", "http://localhost:8000") 

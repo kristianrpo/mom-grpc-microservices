@@ -11,6 +11,7 @@ import sys
 import os
 from proto.mom import mom_pb2, mom_pb2_grpc
 from proto.multiplication_service.multiplication_service_pb2_grpc import MultiplicationServiceServicer
+from constants.states import states
 
 def multiply(a, b):
     """
@@ -45,7 +46,7 @@ def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result
 
     # Prepare the response data as a JSON-encoded string.
     response_data = json.dumps({
-        "status": "ok",
+        "status": states["1"],
         "result": result,
         "timestamp": datetime.utcnow().isoformat()
     })
@@ -132,8 +133,8 @@ class MultiplicationService(MultiplicationServiceServicer):
             result = multiply(a, b)
             # Prepare the result data as a dictionary.
             result_data = {
+                "status": states["1"],
                 "product": result,
-                "status": "ok",
                 "timestamp": datetime.utcnow().isoformat() + "Z"
             }
             # Convert the dictionary to a JSON string.
@@ -228,7 +229,7 @@ def serve():
     multiplication_service_pb2_grpc.add_MultiplicationServiceServicer_to_server(MultiplicationService(), server)
     port = os.getenv("GRPC_PORT", "50053")  # Define the port for the gRPC server.
     server.add_insecure_port(f"[::]:{port}")
-    
+
     # Start the gRPC server.
     server.start()
     print(f"🚀 MultiplicationService gRPC server started on port {port}")
