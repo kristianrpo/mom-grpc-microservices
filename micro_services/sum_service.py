@@ -38,7 +38,7 @@ def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result
     """
 
     # Create an insecure gRPC channel to the MOM service running on localhost port 50051.
-    channel = grpc.insecure_channel('localhost:50051')
+    channel = grpc.insecure_channel(os.getenv("INSECURE_CHANNEL_MOM", "localhost:50051"))
 
     # Create a stub (client) for the MOM service.
     stub = mom_pb2_grpc.MOMServiceStub(channel)
@@ -71,7 +71,7 @@ class RedisHandler:
     """
     Helper class to interact with Redis.
     """
-    def __init__(self, host="localhost", port=6379):
+    def __init__(self, host=os.getenv("REDIS_HOST", "localhost"), port=int(os.getenv("REDIS_PORT", 6379))):
         # Initialize the Redis client with host, port, and enable string decoding.
         self.client = redis.Redis(host=host, port=port, decode_responses=True)
 
@@ -223,7 +223,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     # Add the SumService to the gRPC server.
     sum_service_pb2_grpc.add_SumServiceServicer_to_server(SumService(), server)
-    port = "50052"  # Define the port for the gRPC server.
+    port = os.getenv("GRPC_PORT", "50052")  # Define the port for the gRPC server.
     server.add_insecure_port(f"[::]:{port}")
     # Start the gRPC server.
     server.start()
