@@ -36,8 +36,10 @@ def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result
         created_at (str): The creation timestamp of the task in ISO format.
         result (number): The computed result of the task.
     """
+
     # Create an insecure gRPC channel to the MOM service running on localhost port 50051.
     channel = grpc.insecure_channel('localhost:50051')
+
     # Create a stub (client) for the MOM service.
     stub = mom_pb2_grpc.MOMServiceStub(channel)
 
@@ -212,14 +214,14 @@ def process_tasks(redis_handler):
 
 def serve():
     """
-    Starts the CalculatorService gRPC server and the Redis tasks consumer.
+    Starts the SumService gRPC server and the Redis tasks consumer.
     """
     # Create an instance of RedisHandler to interact with Redis.
     redis_handler = RedisHandler()
 
     # Initialize the gRPC server with a thread pool of 10 workers.
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    # Add the CalculatorService to the gRPC server.
+    # Add the SumService to the gRPC server.
     sum_service_pb2_grpc.add_SumServiceServicer_to_server(SumService(), server)
     port = "50052"  # Define the port for the gRPC server.
     server.add_insecure_port(f"[::]:{port}")
