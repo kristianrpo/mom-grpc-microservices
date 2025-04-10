@@ -112,7 +112,7 @@ class RedisHandler:
 
 class SumService(SumServiceServicer):
     """
-    gRPC service implementation for the CalculatorService.
+    gRPC service implementation for the SumService.
     """
     def SumNumbers(self, request, context):
         """
