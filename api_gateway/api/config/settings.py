@@ -26,6 +26,16 @@ class Settings:
                     "request": "MultiplyNumbersRequest"
                 }
             }
+        },
+        "SubtractionService": {
+            "host": os.getenv("SUBTRACTION_HOST", "localhost"),
+            "port": os.getenv("SUBTRACTION_PORT", "50054"),
+            "stub": "SubtractionServiceStub",
+            "methods": {
+                "SubtractNumbers": {
+                    "request": "SubtractNumbersRequest"
+                }
+            }
         }
     }
 

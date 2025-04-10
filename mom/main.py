@@ -9,7 +9,9 @@ mom_pb2_grpc.add_MOMServiceServicer_to_server(
     MOMServiceServicer(), server
 )
 
-server.add_insecure_port('[::]:50051')
+port = os.getenv("GRPC_PORT", "50051")
+
+server.add_insecure_port(f'[::]:{port}')
 
 server.start()
 print("🟢 MOM gRPC server is running on port 50051...")

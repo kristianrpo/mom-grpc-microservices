@@ -11,8 +11,9 @@ import sys
 import os
 from proto.mom import mom_pb2, mom_pb2_grpc
 from proto.subtraction_service.subtraction_service_pb2_grpc import SubtractionServiceServicer
+from constants.states import states
 
-def restar(a, b):
+def subtract(a, b):
     """
     Primary logic function to subtract two numbers.
     
@@ -23,7 +24,7 @@ def restar(a, b):
     Returns:
         number: The subtract of a and b.
     """
-    return a + b
+    return a - b
 
 def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result):
     """
@@ -37,13 +38,14 @@ def response_to_mom(client_id, task_id, time_to_live_seconds, created_at, result
         result (number): The computed result of the task.
     """
     # Create an insecure gRPC channel to the MOM service running on localhost port 50051.
-    channel = grpc.insecure_channel('localhost:50051')
+    channel = grpc.insecure_channel(os.getenv("INSECURE_CHANNEL_MOM", "localhost:50051"))
+
     # Create a stub (client) for the MOM service.
     stub = mom_pb2_grpc.MOMServiceStub(channel)
 
     # Prepare the response data as a JSON-encoded string.
     response_data = json.dumps({
-        "status": "ok",
+        "status": states["1"],
         "result": result,
         "timestamp": datetime.utcnow().isoformat()
     })
@@ -69,7 +71,7 @@ class RedisHandler:
     """
     Helper class to interact with Redis.
     """
-    def __init__(self, host="localhost", port=6379):
+    def __init__(self, host=os.getenv("REDIS_HOST", "localhost"), port=int(os.getenv("REDIS_PORT", 6379))):
         # Initialize the Redis client with host, port, and enable string decoding.
         self.client = redis.Redis(host=host, port=port, decode_responses=True)
 
@@ -110,7 +112,7 @@ class RedisHandler:
 
 class SubtractService(SubtractionServiceServicer):
     """
-    gRPC service implementation for the CalculatorService.
+    gRPC service implementation for the SubtractService.
     """
     def SubtractNumbers(self, request, context):
         """
@@ -128,11 +130,11 @@ class SubtractService(SubtractionServiceServicer):
             a = request.parameter_a
             b = request.parameter_b
             # Compute the sum using the helper function.
-            result = restar(a, b)
+            result = subtract(a, b)
             # Prepare the result data as a dictionary.
             result_data = {
-                "sum": result,
-                "status": "ok",
+                "status": states["1"],
+                "subtraction": result,
                 "timestamp": datetime.utcnow().isoformat() + "Z"
             }
             # Convert the dictionary to a JSON string.
@@ -143,8 +145,8 @@ class SubtractService(SubtractionServiceServicer):
         except Exception as e:
             # If an error occurs, prepare an error response.
             error_data = {
+                "status": states["2"],
                 "error": str(e),
-                "status": "fail"
             }
             return subtraction_service_pb2.SumNumbersResponse(result=json.dumps(error_data))
 
@@ -191,8 +193,8 @@ def process_tasks(redis_handler):
                     a = payload.get("parameter_a")
                     b = payload.get("parameter_b")
                     # Compute the result using the sum function.
-                    result = restar(a, b)
-                    print(f"🧮 Task processed: {a} + {b} = {result}")
+                    result = subtract(a, b)
+                    print(f"🧮 Task processed: {a} - {b} = {result}")
                     
                     # Send the computed result to the MOM service.
                     response_to_mom(
@@ -212,16 +214,17 @@ def process_tasks(redis_handler):
 
 def serve():
     """
-    Starts the CalculatorService gRPC server and the Redis tasks consumer.
+    Starts the SubtractService gRPC server and the Redis tasks consumer.
     """
     # Create an instance of RedisHandler to interact with Redis.
     redis_handler = RedisHandler()
 
     # Initialize the gRPC server with a thread pool of 10 workers.
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    # Add the CalculatorService to the gRPC server.
+    # Add the SubtractService to the gRPC server.
     subtraction_service_pb2_grpc.add_SubtractionServiceServicer_to_server(SubtractService(), server)
-    port = "50054"  # Define the port for the gRPC server.
+    port = os.getenv("GRPC_PORT", "50054")  # Define the port for the gRPC server.
+
     server.add_insecure_port(f"[::]:{port}")
     # Start the gRPC server.
     server.start()

@@ -145,8 +145,8 @@ class MultiplicationService(MultiplicationServiceServicer):
         except Exception as e:
             # If an error occurs, prepare an error response.
             error_data = {
+                "status": states["2"],
                 "error": str(e),
-                "status": "fail"
             }
             return multiplication_service_pb2.MultiplyNumbersResponse(result=json.dumps(error_data))
 

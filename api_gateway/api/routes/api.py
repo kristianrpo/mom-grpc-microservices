@@ -27,7 +27,7 @@ async def handle_request(request: ServiceRequest):
     logger.info(f"Received request: task_id={task_id}, service_name={request.service_name}, client_id={request.client_id}")
 
     try:
-        # Verificar que el servicio exista antes de instanciarlo
+       
         if request.service_name not in services:
             error_message = f"Service '{request.service_name}' not found in configured services."
             logger.error(error_message)
