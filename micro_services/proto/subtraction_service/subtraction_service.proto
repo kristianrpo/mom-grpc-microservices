@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package subtraction_service;
+
+service SubtractionService {
+  rpc SubtractNumbers (SubtractNumbersRequest) returns (SubtractNumbersResponse) {}
+}
+
+message SubtractNumbersRequest {
+  double parameter_a = 1;
+  double parameter_b = 2;
+}
+
+message SubtractNumbersResponse {
+  string result = 1;
+} 
