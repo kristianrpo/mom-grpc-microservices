@@ -23,6 +23,18 @@ class ServiceRequest(BaseModel):
 
 @router.post("/request")
 async def handle_request(request: ServiceRequest):
+    """
+    Handle incoming service requests and route them to the appropriate service or enqueue them if the service is unavailable.
+
+    Args:
+        request (ServiceRequest): The incoming service request containing service name, client ID, payload, and TTL.
+
+    Returns:
+        dict: A response dictionary indicating whether the task was processed immediately or queued, including task ID and response details.
+
+    Raises:
+        HTTPException: If the requested service is not found or if there are validation errors.
+    """
     task_id = str(uuid.uuid4())
     logger.info(f"Received request: task_id={task_id}, service_name={request.service_name}, client_id={request.client_id}")
 
@@ -72,13 +84,25 @@ async def handle_request(request: ServiceRequest):
         raise HTTPException(status_code=400, detail=str(e)) from e
 
     except Exception as e:
-        # Log detallado con traceback
         tb = traceback.format_exc()
         logger.critical(f"Unhandled Exception: {e}\nTraceback:\n{tb}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}") from e
 
 @router.get("/task/{task_id}")
 async def get_task_status(task_id: str, client_id: str):
+    """
+    Check the status of a specific task in the MOM system.
+
+    Args:
+        task_id (str): The unique identifier of the task.
+        client_id (str): The identifier of the client who initiated the task.
+
+    Returns:
+        dict: A dictionary containing the task status, response message, and timestamp.
+
+    Raises:
+        HTTPException: If a gRPC error occurs while checking the task status.
+    """
     try:
         logger.info(f"Checking task status for task_id={task_id}, client_id={client_id}")
         response = mom_client.check_task(task_id, client_id)
@@ -93,6 +117,15 @@ async def get_task_status(task_id: str, client_id: str):
 
 @router.get("/services")
 async def list_services():
+    """
+    List all available services configured in the system.
+
+    Returns:
+        dict: A dictionary where each key is a service name, and its value contains a list of available methods for that service.
+
+    Raises:
+        HTTPException: If no services are configured in the system.
+    """
     logger.info("Listing available services")
     if not services:
         logger.error("No services configured in settings")
