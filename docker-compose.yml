@@ -16,10 +16,7 @@ services:
 
   # API Gateway
   api_gateway:
-    build:
-      context: ./mom-grpc-microservices/api_gateway
-      dockerfile: Dockerfile
-    image: telematics/api_gateway:latest
+    image: kristianrpo30/api-gateway-telematics:latest
     ports:
       - "80:80"
     env_file:
@@ -34,10 +31,7 @@ services:
 
   # Microservice Multiplication
   microservice_multiplication:
-    build:
-      context: ./mom-grpc-microservices/micro_services/micro_service_multiplication
-      dockerfile: Dockerfile
-    image: telematics/microservice_multiplication:latest
+    image: kristianrpo30/microservice-multiplication-telematics:latest
     ports:
       - "50053:50053"
     env_file:
@@ -53,10 +47,7 @@ services:
 
   # Microservice Subtraction
   microservice_subtraction:
-    build:
-      context: ./mom-grpc-microservices/micro_services/micro_service_subtraction
-      dockerfile: Dockerfile
-    image: telematics/microservice_subtraction:latest
+    image: kristianrpo30/microservice-subtraction-telematics:latest
     ports:
       - "50054:50054"
     env_file:
@@ -71,10 +62,7 @@ services:
 
   # Microservice Sum
   microservice_sum:
-    build:
-      context: ./mom-grpc-microservices/micro_services/micro_service_sum
-      dockerfile: Dockerfile
-    image: telematics/microservice_sum:latest
+    image: kristianrpo30/microservice-sum-telematics:latest
     ports:
       - "50052:50052"
     env_file:
