@@ -6,6 +6,8 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
+    networks:
+      - default
     deploy:
       replicas: 1
       restart_policy:
@@ -19,6 +21,8 @@ services:
     image: kristianrpo30/api-gateway-telematics:latest
     ports:
       - "80:80"
+    networks:
+      - default
     env_file:
       - ./api_gateway/.env
     deploy:
@@ -34,6 +38,10 @@ services:
     image: kristianrpo30/microservice-multiplication-telematics:latest
     ports:
       - "50053:50053"
+    networks:
+      - default
+    depends_on:
+      - redis
     env_file:
       - ./micro_services/micro_service_multiplication/.env
     deploy:
@@ -50,6 +58,10 @@ services:
     image: kristianrpo30/microservice-subtraction-telematics:latest
     ports:
       - "50054:50054"
+    networks:
+      - default
+    depends_on:
+      - redis
     env_file:
       - ./micro_services/micro_service_subtraction/.env
     deploy:
@@ -65,6 +77,10 @@ services:
     image: kristianrpo30/microservice-sum-telematics:latest
     ports:
       - "50052:50052"
+    networks:
+      - default
+    depends_on:
+      - redis
     env_file:
       - ./micro_services/micro_service_sum/.env
     deploy:
@@ -80,6 +96,10 @@ services:
     image: kristianrpo30/mom-telematics:latest
     ports:
       - "50051:50051"
+    networks:
+      - default
+    depends_on:
+      - redis
     env_file:
       - ./mom/.env
     deploy:
