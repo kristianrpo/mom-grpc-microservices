@@ -10,6 +10,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == redis
 
   # API Gateway
   api_gateway:
@@ -19,7 +22,7 @@ services:
     ports:
       - "80:80"
     env_file:
-      - ./mom-grpc-microservices/api_gateway/.env
+      - ./api_gateway/.env
     deploy:
       replicas: 2
       restart_policy:
@@ -36,7 +39,7 @@ services:
     ports:
       - "50053:50053"
     env_file:
-      - ./mom-grpc-microservices/micro_services/micro_service_multiplication/.env
+      - ./micro_services/micro_service_multiplication/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -54,7 +57,7 @@ services:
     ports:
       - "50054:50054"
     env_file:
-      - ./mom-grpc-microservices/micro_services/micro_service_subtraction/.env
+      - ./micro_services/micro_service_subtraction/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -71,7 +74,7 @@ services:
     ports:
       - "50052:50052"
     env_file:
-      - ./mom-grpc-microservices/micro_services/micro_service_sum/.env
+      - ./micro_services/micro_service_sum/.env
     deploy:
       replicas: 1
       restart_policy:
@@ -88,7 +91,7 @@ services:
     ports:
       - "50051:50051"
     env_file:
-      - ./mom-grpc-microservices/mom/.env
+      - ./mom/.env
     deploy:
       replicas: 1
       restart_policy:
