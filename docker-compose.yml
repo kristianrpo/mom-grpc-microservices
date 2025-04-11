@@ -77,10 +77,7 @@ services:
 
   # MOM
   mom:
-    build:
-      context: ./mom-grpc-microservices/mom
-      dockerfile: Dockerfile
-    image: telematics/mom:latest
+    image: kristianrpo30/mom-telematics:latest
     ports:
       - "50051:50051"
     env_file:
