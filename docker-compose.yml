@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # Redis
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  # API Gateway
+  api_gateway:
+    build:
+      context: ./mom-grpc-microservices/api_gateway
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    env_file:
+      - ./mom-grpc-microservices/api_gateway/.env
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == api-gateway
+
+  # Microservice Multiplication
+  microservice_multiplication:
+    build:
+      context: ./mom-grpc-microservices/micro_services/micro_service_multiplication
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50053"
+    env_file:
+      - ./mom-grpc-microservices/micro_services/micro_service_multiplication/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == microservice-multiplication
+
+
+  # Microservice Subtraction
+  microservice_subtraction:
+    build:
+      context: ./mom-grpc-microservices/micro_services/micro_service_subtraction
+      dockerfile: Dockerfile
+    ports:
+      - "50054:50054"
+    env_file:
+      - ./mom-grpc-microservices/micro_services/micro_service_subtraction/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == microservice-subtraction
+
+  # Microservice Sum
+  microservice_sum:
+    build:
+      context: ./mom-grpc-microservices/micro_services/micro_service_sum
+      dockerfile: Dockerfile
+    ports:
+      - "50052:50052"
+    env_file:
+      - ./mom-grpc-microservices/micro_services/micro_service_sum/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == microservice-sum
+
+  # MOM
+  mom:
+    build:
+      context: ./mom-grpc-microservices/mom
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    env_file:
+      - ./mom-grpc-microservices/mom/.env
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints:
+          - node.labels.function == mom
+
+
+# Definir una red overlay (recomendada en Swarm)
+networks:
+  default:
+    driver: overlay
