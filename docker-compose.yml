@@ -19,12 +19,13 @@ services:
     build:
       context: ./mom-grpc-microservices/api_gateway
       dockerfile: Dockerfile
+    image: telematics/api_gateway:latest
     ports:
       - "80:80"
     env_file:
       - ./api_gateway/.env
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       placement:
@@ -36,6 +37,7 @@ services:
     build:
       context: ./mom-grpc-microservices/micro_services/micro_service_multiplication
       dockerfile: Dockerfile
+    image: telematics/microservice_multiplication:latest
     ports:
       - "50053:50053"
     env_file:
@@ -54,6 +56,7 @@ services:
     build:
       context: ./mom-grpc-microservices/micro_services/micro_service_subtraction
       dockerfile: Dockerfile
+    image: telematics/microservice_subtraction:latest
     ports:
       - "50054:50054"
     env_file:
@@ -71,12 +74,13 @@ services:
     build:
       context: ./mom-grpc-microservices/micro_services/micro_service_sum
       dockerfile: Dockerfile
+    image: telematics/microservice_sum:latest
     ports:
       - "50052:50052"
     env_file:
       - ./micro_services/micro_service_sum/.env
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         condition: on-failure
       placement:
@@ -88,6 +92,7 @@ services:
     build:
       context: ./mom-grpc-microservices/mom
       dockerfile: Dockerfile
+    image: telematics/mom:latest
     ports:
       - "50051:50051"
     env_file:
