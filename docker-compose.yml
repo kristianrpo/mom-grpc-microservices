@@ -107,8 +107,3 @@ services:
 networks:
   default:
     driver: overlay
-    attachable: true
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.0.0/24
