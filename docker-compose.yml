@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Redis
   redis:
     image: redis:latest
     ports:
@@ -16,7 +15,6 @@ services:
         constraints:
           - node.labels.function == redis
 
-  # API Gateway
   api_gateway:
     image: kristianrpo30/api-gateway-telematics:latest
     ports:
@@ -33,7 +31,6 @@ services:
         constraints:
           - node.labels.function == api-gateway
 
-  # Microservice Multiplication
   microservice_multiplication:
     image: kristianrpo30/microservice-multiplication-telematics:latest
     ports:
@@ -52,8 +49,6 @@ services:
         constraints:
           - node.labels.function == microservice-multiplication
 
-
-  # Microservice Subtraction
   microservice_subtraction:
     image: kristianrpo30/microservice-subtraction-telematics:latest
     ports:
@@ -72,7 +67,6 @@ services:
         constraints:
           - node.labels.function == microservice-subtraction
 
-  # Microservice Sum
   microservice_sum:
     image: kristianrpo30/microservice-sum-telematics:latest
     ports:
@@ -91,7 +85,6 @@ services:
         constraints:
           - node.labels.function == microservice-sum
 
-  # MOM
   mom:
     image: kristianrpo30/mom-telematics:latest
     ports:
@@ -111,7 +104,11 @@ services:
           - node.labels.function == mom
 
 
-# Definir una red overlay (recomendada en Swarm)
 networks:
   default:
     driver: overlay
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
