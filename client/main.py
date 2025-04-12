@@ -6,7 +6,7 @@ from utils.task_retrieval import get_client_tasks, get_task_result
 import sys
 
 def main():
-    args = parse_client_args()
+    parser, args = parse_client_args()
 
     if args.command is None:
         parser.print_help()

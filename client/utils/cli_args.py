@@ -48,4 +48,4 @@ def parse_client_args():
     # Subcommand: services
     services_parser = subparsers.add_parser("services", help="List available services")
 
-    return parser.parse_args()
+    return parser, parser.parse_args()
