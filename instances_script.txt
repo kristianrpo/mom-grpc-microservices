@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# Hacer update y upgrade del sistema
 sudo apt-get update -y
 sudo apt-get upgrade -y
 
-# Instalar paquetes necesarios
 sudo apt-get install -y \
   apt-transport-https \
   ca-certificates \
@@ -12,14 +10,10 @@ sudo apt-get install -y \
   software-properties-common \
   git
 
-# Instalar docker
 sudo apt-get install -y docker.io
 
-# Instalar docker-compose
 sudo apt-get install -y docker-compose
 
-# Ir a directorio raiz
 cd /home/ubuntu
 
-# Clonar un repositorio de GitHub (cambia la URL por la tuya)
 git clone https://github.com/kristianrpo/mom-grpc-microservices.git
