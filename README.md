@@ -22,10 +22,80 @@ This repository contains the first project for EAFIT University's Topics in Tele
 ├── instances_script.txt # AWS instance setup
 └── .gitignore
 ```
-## 📋 Documentation Quick Links
-| Section | Wiki Reference |
-|---------|----------------|
-| Requirements | [Requirements Docs](wiki/requirements) |
-| System Analysis | [Analysis Docs](wiki/analysis) |
-| Architectural Design | [Design Docs](wiki/design) |
-| Implementation | [Implementation Guide](wiki/implementation) |
+## 🚀 Usage & Deployment
+### AWS Cluster Setup
+1. Launch Instances (7x AWS EC2 from template): Load the [`instances_script.txt`](instances_script.txt) as **User Data** during template creation and configure inbound rules.
+2. Initialize Swarm Manager:
+   ```bash
+   docker swarm init --advertise-addr <MANAGER_IP>
+   ```
+3. Join Workers:
+   ```bash
+   docker swarm join --token <TOKEN> <MANAGER_IP>:2377  # Run on all workers
+   ```
+5. Node Configuration
+   ```bash
+   # Label nodes for role assignment (run on manager)
+   docker node update --label-add function=api-gateway manager-01
+   docker node update --label-add function=redis worker-01
+   docker node update --label-add function=microservice-sum worker-02
+   docker node update --label-add function=mom worker-03
+   # ... (add other microservices)
+   ```
+5. Deploy Stack
+   ```bash
+   # From manager node:
+   docker stack deploy -c docker-compose.yml my_stack
+   ```
+   ```bash
+   docker service ls  # Verify services
+   ```
+### Local Setup
+
+1. Redis Setup with Docker (Recommended for Local Development)
+    - 📌 Prerequisites: Docker Desktop installed and running
+    - 🚀 Step-by-Step Running Redis in Docker:
+      - Pull the Redis Image: If you don’t have Redis locally, Docker will download it automatically
+      ```bash
+      docker pull redis:alpine  # Lightweight Redis image
+      ```
+      - Start a Redis Container:
+      ```bash
+      docker run --name redis-mom -p 6379:6379 -d redis:alpine
+      ```
+
+2. Run Microservices
+    - Sum Service:
+    ```bash
+    cd micro_services/micro_service_sum
+    python sum_service.py
+    ```
+    - Subtraction Service:
+    ```bash
+    cd micro_services/micro_service_subtraction
+    python subtraction_service.py
+    ```
+    - Multiplication Service:
+    ```bash
+    cd micro_services/micro_service_multiplication
+    python multiplication_service.py
+    ```
+
+3. Start MOM Handler
+   ```bash
+   cd mom
+   python main.py
+   ```
+4. Launch API Gateway
+   ```bash
+   cd api_gateway
+   uvicorn app:app --host 0.0.0.0 --port 80
+   ```
+5. Test the System using Client
+   ```bash
+   cd client
+   python main.py
+   ```
+## Developers and Contact
+For further inquiries, please contact:
+
