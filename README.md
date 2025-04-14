@@ -99,3 +99,6 @@ This repository contains the first project for EAFIT University's Topics in Tele
 ## Developers and Contact
 For further inquiries, please contact:
 
+- Sara Cortes: svcortesm@eafit.edu.co
+- Kristian Restrepo: krestrepoo@eafit.edu.co
+- Evelyn Zapata: eazapatat@eafit.edu.co
