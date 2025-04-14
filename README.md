@@ -5,7 +5,8 @@
 [![Docker](https://img.shields.io/badge/Docker-Swarm-orange)](https://docker.com)
 
 A distributed system with failover capabilities developed for the Special Topics in Telematics course at EAFIT University.
-## 📦 Introduction
+
+## 📌 Introduction
 This repository contains the first project for EAFIT University's Topics in Telematics course, implementing a fault-tolerant microservices system where an API Gateway (FastAPI) handles REST client requests and communicates with gRPC microservices (Sum/Subtraction/Multiplication), automatically failing over to a Redis-based MOM for request queuing during service outages, with Docker Swarm deployment on AWS ensuring high availability.
 
 ## 📦 Repository Structure
@@ -21,3 +22,10 @@ This repository contains the first project for EAFIT University's Topics in Tele
 ├── instances_script.txt # AWS instance setup
 └── .gitignore
 ```
+## 📋 Documentation Quick Links
+| Section | Wiki Reference |
+|---------|----------------|
+| Requirements | [Requirements Docs](wiki/requirements) |
+| System Analysis | [Analysis Docs](wiki/analysis) |
+| Architectural Design | [Design Docs](wiki/design) |
+| Implementation | [Implementation Guide](wiki/implementation) |
