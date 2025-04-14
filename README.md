@@ -96,7 +96,7 @@ This repository contains the first project for EAFIT University's Topics in Tele
    cd client
    python main.py
    ```
-## Developers and Contact
+## 👥 Developers and Contact
 For further inquiries, please contact:
 
 - Sara Cortes: svcortesm@eafit.edu.co
