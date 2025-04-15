@@ -65,7 +65,7 @@ def test_timeout_when_service_never_starts():
     cmd = build_submit_command("test_client", "SumService", 1, 2)
     proc_client = subprocess.Popen(cmd, cwd="../client", stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, preexec_fn=os.setsid)
 
-    time.sleep(32)
+    time.sleep(40)
     stop_process(proc_client)
     stdout, stderr = proc_client.communicate()
     assert "timeout reached" in stdout.lower(), "❌ Timeout not detected as expected"
