@@ -23,7 +23,6 @@ def main():
         else:
             payload = {"parameter_a": args.a, "parameter_b": args.b}
 
-        print(client_id, payload, service_name  )
         response = handle_request(client_id, payload, service_name)
 
         if response.get("processed_immediately"):
