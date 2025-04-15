@@ -3,40 +3,34 @@ import threading
 from services.api_gateway import get_task_status
 from utils.client_actions import ask_to_continue, notify
 
-def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, max_retries=3, interactive=True):
+def poll_for_response(client_id, task_id, timeout=30, poll_interval=5, ttl=60, interactive=True):
     """
-    Polls the server for the task response until it's completed or timeout is reached.
+    Polls the server for the task response until it's completed or TTL/timeout is reached.
     """
     start = time.time()
-    retries = 0
+    timeout_start = start
 
     while True:
         elapsed = time.time() - start
-        retries += 1
+        timeout_elapsed = time.time() - timeout_start
 
-        if elapsed > timeout:
-            notify(client_id, task_id, "🕐 Timeout reached. No response received.")
-            
+        if elapsed > ttl:
+            notify(client_id, task_id, "🚫 Task canceled after exceeding TTL")
+            break
+
+        if timeout_elapsed > timeout:
             if interactive:
+                notify(client_id, task_id, "🕐 Timeout reached. No response received.")
                 if ask_to_continue():
-                    notify(client_id, task_id, "🔁 Restarting the wait...")
-                    start = time.time()
+                    notify(client_id, task_id, "🔁 Continue waiting...")
+                    timeout_start = time.time()
                     continue
                 else:
                     notify(client_id, task_id, "🚫 Task canceled by user.")
                     break
-            
-            else:
-                if retries < max_retries:
-                    notify(client_id, task_id, "🔁 Restarting the wait...")
-                    start = time.time()
-                    continue
-                else:
-                    notify(client_id, task_id, "🚫 Max retries reached. Cancelling task.")
-                    break
 
         response = get_task_status(client_id, task_id)
-        
+
         if response.get("status") == "completed":
             notify(client_id, task_id, f"✅ Response for task {task_id} received: {response}")
             break

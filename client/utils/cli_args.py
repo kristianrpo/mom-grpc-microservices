@@ -13,15 +13,13 @@ def parse_client_args():
             python main.py submit --client-id {client_id} --service {service_name} --a {value1} --b {value2}
 
             # Submit a task in the background
-            nohup python main.py submit --client-id {client_id} --service {service_name} --a {value1} --b {value2} --background &
+            python main.py submit --client-id {client_id} --service {service_name} --a {value1} --b {value2} --background > nohup.out 2>&1 &
 
             # List tasks submitted by a client
             python main.py list {client_id}
 
             # Get the result of a specific task
             python main.py result {client_id} {task_id}
-
-            Note: Use '&' or 'nohup' if you want to run tasks in the background.
             """,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
